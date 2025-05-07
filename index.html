@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bulut'un E-book ve Dergi Arşivi</title>
+    <style>
+        body {
+            background-color: #121212; /* Default dark theme */
+            color: white;
+            font-family: sans-serif;
+            margin: 0;
+            padding: 20px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        #topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+        #left-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            background-color: #333;
+            color: white;
+            font-weight: bold;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        #language-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        #search-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin: 20px 0;
+        }
+        #arama {
+            padding: 12px;
+            width: 60%;
+            min-width: 200px; /* Ensure input is usable on small screens */
+            font-size: 16px;
+            border-radius: 8px;
+            border: none;
+            outline: none;
+            background-color: white;
+            color: black;
+            transition: background-color 0.3s;
+        }
+        #search-button {
+            padding: 12px 20px;
+            font-size: 16px;
+            border-radius: 8px;
+            border: none;
+            background-color: #333;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        #harfler {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 5px;
+            margin-bottom: 20px;
+        }
+        .harf-btn {
+            padding: 8px 12px;
+            background-color: #333;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .result {
+            margin-top: 20px;
+            max-width: 90%;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .result-item {
+            background-color: #1e1e1e;
+            padding: 10px;
+            margin: 0 0 5px 0; 
+            border-bottom: 1px solid #444;
+            border-radius: 6px;
+            text-align: left;
+            transition: background-color 0.3s, border-bottom 0.3s;
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+        }
+        .result-item-content {
+            display: flex; 
+            align-items: center;
+            flex-grow: 1; 
+        }
+        .result-item-number {
+            background-color: #333;
+            color: white;
+            padding: 6px 8px; 
+            margin-right: 10px;
+            border-radius: 4px;
+            font-weight: bold;
+            text-align: center;
+        }
+        .result-item-text {
+            flex-grow: 1; 
+        }
+        .result-item-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px; 
+            margin-left: 15px; 
+        }
+        .folder-info {
+            font-size: 0.9em;
+            color: #aaa; 
+        }
+        .google-search-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+        }
+        .google-search-btn img {
+            width: 20px; 
+            height: 20px;
+            vertical-align: middle;
+        }
+        #pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center; 
+            gap: 5px;
+            margin-top: 20px;
+            flex-wrap: wrap; 
+        }
+        .page-btn, .pagination-ellipsis {
+            padding: 8px 12px;
+            background-color: #333;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .page-btn.active {
+            background-color: #555;
+            font-weight: bold;
+        }
+        .page-btn:disabled {
+            background-color: #555;
+            color: #888;
+            cursor: not-allowed;
+        }
+        .pagination-ellipsis {
+             cursor: default;
+             background-color: transparent; 
+             padding: 8px 5px; 
+        }
+        #footer {
+            margin-top: 40px;
+            font-size: 0.9em;
+            color: #aaa;
+            text-align: center;
+            transition: color 0.3s;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 5px; 
+        }
+        #latin-quote {
+            text-align: center;
+            font-size: 0.9em; 
+            color: #ccc; 
+            margin-bottom: 20px;
+        }
+        .theme-switch-label {
+            position: relative;
+            display: inline-block;
+            width: 50px; 
+            height: 26px;
+            margin: 0 5px; 
+        }
+        .theme-switch-label input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .theme-switch-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #4A4A4A; 
+            transition: .4s;
+            border-radius: 26px;
+        }
+        .theme-switch-slider:before { 
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 3px;
+            bottom: 3px;
+            background-color: #E91E63; 
+            transition: .4s;
+            border-radius: 50%;
+        }
+        .theme-switch-slider svg { 
+            position: absolute;
+            width: 12px; 
+            height: 12px; 
+            top: 50%;
+            transform: translateY(-50%);
+            transition: left .4s, fill .4s;
+        }
+        .theme-switch-label input:checked + .theme-switch-slider {
+            background-color: #BDBDBD; 
+        }
+        .theme-switch-label input:checked + .theme-switch-slider:before {
+            transform: translateX(24px); 
+            background-color: #FFC107; 
+        }
+        body.light-theme {
+            background-color: #f0f0f0;
+            color: black;
+        }
+        body.light-theme #arama {
+            background-color: #e0e0e0;
+        }
+        body.light-theme .button,
+        body.light-theme .harf-btn,
+        body.light-theme #search-button,
+        body.light-theme .page-btn {
+            background-color: #ccc;
+            color: black;
+        }
+        body.light-theme .page-btn.active {
+            background-color: #aaa;
+        }
+        body.light-theme .page-btn:disabled {
+            background-color: #ddd;
+            color: #999;
+        }
+        body.light-theme .pagination-ellipsis {
+             color: #555;
+             background-color: transparent;
+        }
+         body.light-theme .result-item {
+            background-color: #f9f9f9;
+            border-bottom: 1px solid #ddd;
+        }
+        body.light-theme #latin-quote {
+            color: #555;
+        }
+        body.light-theme #footer {
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <div id="topbar">
+        <div id="left-buttons">
+            <button class="button" onclick="rastgeleKitapSec()" id="rastgele-kitap-btn">Rastgele Kitap</button>
+            <button class="button" onclick="rastgeleDergiSec()" id="rastgele-dergi-btn">Rastgele Dergi</button>
+        </div>
+        <div id="right-controls" style="display: flex; align-items: center; gap: 10px;">
+            <label class="theme-switch-label" for="theme-checkbox">
+                <input type="checkbox" id="theme-checkbox" onchange="toggleTheme()">
+                <span class="theme-switch-slider">
+                    <svg id="theme-icon-svg" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                    </svg>
+                </span>
+            </label>
+            <div id="language-buttons">
+                 <button class="button" onclick="setLang(\'tr\')">TR</button>
+                 <button class="button" onclick="setLang(\'en\')">EN</button>
+            </div>
+        </div>
+    </div>
+    <h1 id="title">Bulut'un E-book ve Dergi Arşivi</h1>
+    <div id="latin-quote">Legere est vitam alteram omnibus occultam habere</div>
+    <div id="search-container">
+        <input type="text" id="arama" placeholder="Ara...">
+        <button id="search-button" onclick="performSearch()">Ara</button>
+    </div>
+
+    <div id="harfler"></div>
+    <div class="result" id="sonuclar"></div>
+    <div id="pagination"></div>
+
+    <div id="footer">
+        <p id="disclaimer">
+            Bu sayfa sadece aradığınız kitabın Bulut'un kişisel arşivinde olup olmadığını kontrol edebilmeniz için tasarlanmıştır,
+            kitabı indirmeniz mümkün değildir. İhtiyacınız olan kitaba ulaştıktan sonra, baskısı varsa orijinalini satın almanız rica edilir.
+        </p>
+        <p id="contact-info">İletişim: bulut.unvan@gmail.com</p>
+    </div>
+
+    <script>
+    let kitaplar = [];
+    let currentFilteredList = [];
+    let currentPage = 1;
+    const itemsPerPage = 25;
+    let currentSearchTerm = "";
+    let currentFilterType = null; // null, "search", "letter", "randomBook", "randomMagazine"
+    let currentLetter = "";
+
+    let currentLang = localStorage.getItem("language") || "tr";
+    let currentTheme = localStorage.getItem("theme") || "dark";
+
+    const translations = {
+        "tr": {
+            title: "Bulut’un E-kitap ve Dergi Arşivi",
+            placeholder: "Ara...",
+            disclaimer: "Bu sayfa sadece aradığınız kitabın Bulut'un kişisel arşivinde olup olmadığını kontrol edebilmeniz için tasarlanmıştır, kitabı indirmeniz mümkün değildir. İhtiyacınız olan kitaba ulaştıktan sonra, baskısı varsa orijinalini satın almanız rica edilir.",
+            contact: "İletişim: bulut.unvan@gmail.com",
+            noResults: "Sonuç bulunamadı.",
+            noMagazines: "Uygun dergi bulunamadı.",
+            noBooks: "Uygun kitap bulunamadı.",
+            theme: "Tema",
+            randomBookButton: "Rastgele Kitap",
+            randomMagazineButton: "Rastgele Dergi",
+            search: "Ara",
+            alphabet: "ABCÇDEFGHIİJKLMNOÖPQRSŞTUÜVWXYZ",
+            prevButton: "Önceki",
+            nextButton: "Sonraki",
+            emptySearchTerm: "Lütfen aramak istediğiniz kelimeyi girin.",
+            googleSearchText: "Google\'da Ara"
+        },
+        "en": {
+            title: "Bulut\'s E-book and Magazine Archive",
+            placeholder: "Search...",
+            disclaimer: "This page is designed solely to check whether the book you are looking for exists in Bulut\'s personal archive; downloading is not possible. If you find the book you need, please buy the original in print if it is available.",
+            contact: "Contact: bulut.unvan@gmail.com",
+            noResults: "No results found.",
+            noMagazines: "No suitable magazines found.",
+            noBooks: "No suitable books found.",
+            theme: "Theme",
+            randomBookButton: "Random Book",
+            randomMagazineButton: "Random Magazine",
+            search: "Search",
+            alphabet: "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+            prevButton: "Previous",
+            nextButton: "Next",
+            emptySearchTerm: "Please enter a search term.",
+            googleSearchText: "Search on Google"
+        }
+    };
+
+    const sonuclarDiv = document.getElementById("sonuclar");
+    const paginationDiv = document.getElementById("pagination");
+    const aramaInput = document.getElementById("arama");
+    const harflerDiv = document.getElementById("harfler");
+    const titleElement = document.getElementById("title");
+    const latinQuoteElement = document.getElementById("latin-quote");
+    const disclaimerElement = document.getElementById("disclaimer");
+    const contactInfoElement = document.getElementById("contact-info");
+    const themeCheckbox = document.getElementById("theme-checkbox");
+    const themeIconSvg = document.getElementById("theme-icon-svg");
+    const rastgeleKitapBtn = document.getElementById("rastgele-kitap-btn");
+    const rastgeleDergiBtn = document.getElementById("rastgele-dergi-btn");
+    const searchButton = document.getElementById("search-button");
+
+    const sunIconPath = "M8 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0zm0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13zm8-5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5zM3 8a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 3 8zm10.657-5.657a.5.5 0 0 1 0 .707l-1.414 1.415a.5.5 0 1 1-.707-.708l1.414-1.414a.5.5 0 0 1 .707 0zm-9.193 9.193a.5.5 0 0 1 0 .707L3.05 13.657a.5.5 0 0 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0zm9.193 2.121a.5.5 0 0 1-.707 0l-1.414-1.414a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707zM4.464 4.465a.5.5 0 0 1-.707 0L2.343 3.05a.5.5 0 1 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .708z";
+    const moonIconPath = "M6 .278a.768.768 0 0 1 .08.858 7.208 7.208 0 0 0-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 0 1 .81.316.733.733 0 0 1-.031.893A8.349 8.349 0 0 1 8.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 0 1 6 .278zM4.858 1.311A7.269 7.269 0 0 0 1.573 7.71c0 4.021 3.278 7.277 7.318 7.277a7.317 7.317 0 0 0 5.205-2.162c-.337.042-.68.063-1.029.063-4.61 0-8.343-3.714-8.343-8.29 0-1.167.242-2.278.681-3.286z";
+
+    function applyTranslation() {
+        const t = translations[currentLang];
+        if (titleElement) titleElement.textContent = t.title;
+        if (aramaInput) aramaInput.placeholder = t.placeholder;
+        if (disclaimerElement) disclaimerElement.textContent = t.disclaimer;
+        if (contactInfoElement) contactInfoElement.textContent = t.contact;
+        if (rastgeleKitapBtn) rastgeleKitapBtn.textContent = t.randomBookButton;
+        if (rastgeleDergiBtn) rastgeleDergiBtn.textContent = t.randomMagazineButton;
+        if (searchButton) searchButton.textContent = t.search;
+        renderHarfler();
+        if (currentFilteredList.length > 0) {
+            goster(currentPage); 
+        } else if (sonuclarDiv.textContent !== "" && sonuclarDiv.textContent !== t.noResults) {
+             // If there was some other message (like no books/mags), but now lang changed, show generic noResults
+            sonuclarDiv.textContent = t.noResults;
+        }
+    }
+
+    function setLang(langCode) {
+        currentLang = langCode;
+        localStorage.setItem("language", currentLang);
+        applyTranslation();
+        // Re-apply current filter/search with new language context if needed
+        if (currentFilterType === "search" && currentSearchTerm) {
+            performSearch(false); // false to not reset page number if already on a page
+        } else if (currentFilterType === "letter" && currentLetter) {
+            harfFiltrele(currentLetter, false);
+        } else {
+            // If no active filter, but results were shown, re-render them for new lang (e.g. noResults text)
+             if (currentFilteredList.length > 0) goster(currentPage); 
+             else if (sonuclarDiv.textContent !== "") sonuclarDiv.textContent = translations[currentLang].noResults;
+        }
+    }
+
+    function setTheme(themeName) {
+        currentTheme = themeName;
+        localStorage.setItem("theme", currentTheme);
+        document.body.className = themeName === "light" ? "light-theme" : "";
+        themeCheckbox.checked = themeName === "light";
+        const iconPath = themeName === "light" ? sunIconPath : moonIconPath;
+        const iconColor = themeName === "light" ? "#FFC107" : "#E91E63";
+        const iconLeft = themeName === "light" ? "25px" : "3px"; 
+        themeIconSvg.innerHTML = `<path d="${iconPath}"/>`;
+        themeIconSvg.style.fill = iconColor;
+        themeIconSvg.style.left = iconLeft;
+    }
+
+    function toggleTheme() {
+        setTheme(currentTheme === "dark" ? "light" : "dark");
+    }
+
+    function goster(page) {
+        if (!sonuclarDiv || !paginationDiv) return;
+        sonuclarDiv.innerHTML = "";
+        paginationDiv.innerHTML = "";
+        currentPage = page;
+
+        const t = translations[currentLang];
+
+        if (!currentFilteredList || currentFilteredList.length === 0) {
+            sonuclarDiv.textContent = t.noResults;
+            return;
+        }
+
+        const start = (page - 1) * itemsPerPage;
+        const end = page * itemsPerPage;
+        const paginatedItems = currentFilteredList.slice(start, end);
+
+        paginatedItems.forEach((k, index) => {
+            const itemDiv = document.createElement("div");
+            itemDiv.className = "result-item";
+
+            const contentDiv = document.createElement("div");
+            contentDiv.className = "result-item-content";
+
+            const numberDiv = document.createElement("div");
+            numberDiv.className = "result-item-number";
+            numberDiv.textContent = start + index + 1;
+            contentDiv.appendChild(numberDiv);
+
+            const textDiv = document.createElement("div");
+            textDiv.className = "result-item-text";
+            let displayName = k.kitap_adi ? k.kitap_adi.replace(/\.pdf$/i, "") : (k.dosya_adi ? k.dosya_adi.replace(/\.pdf$/i, "") : "");
+            if (k.yazar) {
+                displayName += ` - ${k.yazar}`;
+            }
+            textDiv.textContent = displayName;
+            contentDiv.appendChild(textDiv);
+            itemDiv.appendChild(contentDiv);
+
+            const actionsDiv = document.createElement("div");
+            actionsDiv.className = "result-item-actions";
+
+            if (k.klasor) {
+                const folderInfoSpan = document.createElement("span");
+                folderInfoSpan.className = "folder-info";
+                folderInfoSpan.textContent = k.klasor;
+                actionsDiv.appendChild(folderInfoSpan);
+            }
+
+            const googleBtn = document.createElement("button");
+            googleBtn.className = "google-search-btn";
+            googleBtn.title = t.googleSearchText; 
+            const googleImg = document.createElement("img");
+            googleImg.src = "google_logo.jpg";
+            googleImg.alt = "Google Search";
+            googleBtn.appendChild(googleImg);
+            googleBtn.onclick = function() {
+                let searchTerm = k.kitap_adi ? k.kitap_adi.replace(/\.pdf$/i, "") : (k.dosya_adi ? k.dosya_adi.replace(/\.pdf$/i, "") : "");
+                if (k.yazar) searchTerm += ` ${k.yazar}`;
+                if (k.yayinevi) searchTerm += ` ${k.yayinevi}`;
+                window.open(`https://www.google.com/search?q=${encodeURIComponent(searchTerm.trim())}`, "_blank");
+            };
+            actionsDiv.appendChild(googleBtn);
+            itemDiv.appendChild(actionsDiv);
+
+            sonuclarDiv.appendChild(itemDiv);
+        });
+
+        renderPaginationControls(currentFilteredList.length);
+    }
+
+    function renderPaginationControls(totalItems) {
+        if (!paginationDiv) return;
+        paginationDiv.innerHTML = "";
+        const totalPages = Math.ceil(totalItems / itemsPerPage);
+        const t = translations[currentLang];
+
+        if (totalPages <= 1) return;
+
+        const createPageButton = (text, pageNum, isDisabled = false, isActive = false, isEllipsis = false) => {
+            const btn = document.createElement(isEllipsis ? "span" : "button");
+            btn.textContent = text;
+            if (isEllipsis) {
+                btn.className = "pagination-ellipsis";
+            } else {
+                btn.className = "page-btn";
+                if (isActive) btn.classList.add("active");
+                if (isDisabled) btn.disabled = true;
+                btn.onclick = () => goster(pageNum);
+            }
+            return btn;
+        };
+
+        // Previous Button
+        paginationDiv.appendChild(createPageButton(t.prevButton, currentPage - 1, currentPage === 1));
+
+        // Page Numbers
+        let pagesToShow = [];
+        if (totalPages <= 7) {
+            for (let i = 1; i <= totalPages; i++) pagesToShow.push(i);
+        } else {
+            pagesToShow.push(1);
+            if (currentPage > 4) pagesToShow.push("...");
+
+            let startPage = Math.max(2, currentPage - 2);
+            let endPage = Math.min(totalPages - 1, currentPage + 2);
+            
+            if (currentPage <= 4) {
+                endPage = Math.min(totalPages - 1, 5); 
+            }
+            if (currentPage >= totalPages - 3) {
+                startPage = Math.max(2, totalPages - 4);
+            }
+
+            for (let i = startPage; i <= endPage; i++) pagesToShow.push(i);
+
+            if (currentPage < totalPages - 3) pagesToShow.push("...");
+            pagesToShow.push(totalPages);
+        }
+
+        pagesToShow.forEach(p => {
+            if (p === "...") {
+                paginationDiv.appendChild(createPageButton("...
