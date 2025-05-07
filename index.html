@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bulut'un E-book ve Dergi Arşivi</title>
+    <style>
+        /* … (önceki tüm CSS’inizi koruyun) … */
+
+        .result-item {
+            /* mevcut stilleriniz */
+            display: flex;
+            align-items: center;
+        }
+        .result-item a.google-search {
+            margin-left: auto;
+        }
+        .result-item a.google-search img {
+            width: 20px;
+            height: auto;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <!-- … (önceki tüm HTML’inizi koruyun) … -->
+
+    <div class="result" id="sonuclar"></div>
+    <div id="pagination"></div>
+
+    <!-- … (footer vs.) … -->
+
+    <script>
+    // kitaplar dizisini ve diğer değişkenlerinizi tanımlayan kısım aynı kalacak.
+    // …
+
+    function performSearch() {
+        const term = aramaInput.value.trim().toLowerCase();
+        if (!term) {
+            alert(translations[currentLang].emptySearchTerm);
+            return;
+        }
+        currentFilteredList = kitaplar.filter(k =>
+            k.toLowerCase().includes(term)
+        );
+        currentPage = 1;
+        displayResults();
+        displayPagination();
+    }
+
+    function displayResults() {
+        sonuclarDiv.innerHTML = "";
+        const start = (currentPage - 1) * itemsPerPage;
+        const pageItems = currentFilteredList.slice(start, start + itemsPerPage);
+
+        if (pageItems.length === 0) {
+            sonuclarDiv.textContent = translations[currentLang].noResults;
+            return;
+        }
+
+        pageItems.forEach((item, index) => {
+            const globalIndex = start + index + 1;
+
+            const itemDiv = document.createElement("div");
+            itemDiv.className = "result-item";
+
+            const numDiv = document.createElement("div");
+            numDiv.className = "result-item-number";
+            numDiv.textContent = globalIndex + ".";
+
+            const textDiv = document.createElement("div");
+            textDiv.className = "result-item-text";
+            textDiv.textContent = item;
+
+            // ----- burada yeni eklenen Google butonu -----
+            const query = encodeURIComponent(item);
+            const googleUrl = `https://www.google.com/search?q=${query}`;
+
+            const link = document.createElement("a");
+            link.href = googleUrl;
+            link.target = "_blank";
+            link.className = "google-search";
+
+            const logo = document.createElement("img");
+            logo.src = "googlelogo.webp";
+            logo.alt = "Google'da Ara";
+
+            link.appendChild(logo);
+            // ---------------------------------------------
+
+            itemDiv.appendChild(numDiv);
+            itemDiv.appendChild(textDiv);
+            itemDiv.appendChild(link);
+
+            sonuclarDiv.appendChild(itemDiv);
+        });
+    }
+
+    // pagination fonksiyonunuz değişmeden kalabilir
+    function displayPagination() {
+        // … mevcut kod …
+    }
+
+    // Geri kalan tüm fonksiyonlar (rastgele seç, tema, dil vs.) olduğu gibi kalsın.
+    // …
+    </script>
+</body>
+</html>
